@@ -2,39 +2,120 @@ import turtle
 import time
 
 class Tetris():
-    def __init__(self, window_height, window_width, window):
+    def __init__(self, window_height, window_width):
+        self.fallen_pieces = []
+        self.player_tetraminos = []
         self.window_height = window_height
         self.window_width = window_width
-        self.window = window
-        self.board = []
-        for y in range(0, 20):
-            width = []
-            for x in range(0, 10):
-                width.append(x)
-            self.board.append(width)
-        print(self.board)
-        self.board[2][2] = 1
-        self.board[19][9] = 1
 
-    def draw_board(self):
-        self.window.clear()
+    def stop_tetraminos(self):
+        height_values = []
+        for tetramino in self.player_tetraminos:
+            self.fallen_pieces.append(tetramino)
+            height_values.append(tetramino.ycor())
+        self.player_tetraminos = []
+        self.check_full_line(height_values)
+        self.new_square_tetramino()
+
+    def get_y_coordinate(self):
+        lowest_y = 1000
+        for tetramino in self.player_tetraminos:
+            if tetramino.ycor() < lowest_y:
+                lowest_y = tetramino.ycor()
+        return lowest_y
+
+    def new_square_tetramino(self):
         x = 0
         y = 0
-        for table in self.board:
-            for tetramino in table:
-                tetramino = turtle.Turtle()
-                tetramino.speed(0)
-                tetramino.shape("square")
-                tetramino.pencolor("black")
-                tetramino.fillcolor("blue")
-                tetramino.shapesize(0.95, 0.95, 1)
-                tetramino.up()
-                tetramino.goto(x*20, y*20)
-                tetramino.down()
-                tetramino.penup()
-                x += 1
-            y += 1
-            x = 0
+        for i in range(0,4):
+            if (i == 0):
+                x = 0
+                y = self.window_height/2-20
+            elif (i == 1):
+                x = 0
+                y = self.window_height/2
+            elif (i == 2):
+                x = 20
+                y = self.window_height/2-20
+            else:
+                x = 20
+                y = self.window_height/2
+            tetramino = turtle.Turtle()
+            tetramino.speed(0)
+            tetramino.shape("square")
+            tetramino.pencolor("black")
+            tetramino.fillcolor("blue")
+            tetramino.shapesize(0.95, 0.95, 1)
+            tetramino.up()
+            tetramino.goto(x, y)
+            tetramino.down()
+            tetramino.penup()
+            self.player_tetraminos.append(tetramino)
+
+    def new_tetramino(self):
+        tetramino = turtle.Turtle()
+        tetramino.speed(0)
+        tetramino.shape("square")
+        tetramino.color("green")
+        tetramino.shapesize(0.95, 0.95)
+        tetramino.up()
+        tetramino.goto(0, 100)
+        tetramino.down()
+        tetramino.penup()
+        self.player_tetraminos.append(tetramino)
+
+    def drop_tetramino_one_step(self):
+
+        # Check that tetramino doesn't go out of window
+        if (self.there_is_collision_with_fallen_pieces()):
+            self.stop_tetraminos()
+        if (self.get_y_coordinate() < self.window_height/-2+40):
+            self.stop_tetraminos()
+        else:
+            for tetramino in self.player_tetraminos:
+                tetramino.goto(tetramino.xcor(), tetramino.ycor()-20)
+
+    def there_is_collision_with_fallen_pieces(self):
+        # Check collision with other tetraminos
+        # Return true when there is collision with other pieces, false when not
+        for fallen_tetramino in self.fallen_pieces:
+            for player_tetramino in self.player_tetraminos:
+                if ((player_tetramino.ycor()-20 == fallen_tetramino.ycor()) and
+                player_tetramino.xcor() == fallen_tetramino.xcor()):
+                    return True
+        return False
+
+    def move_right(self):
+        for tetramino in self.player_tetraminos:
+            tetramino.goto(tetramino.xcor()+20, tetramino.ycor())
+
+    def move_left(self):
+        for tetramino in self.player_tetraminos:
+            tetramino.goto(tetramino.xcor() - 20, tetramino.ycor())
+
+    def check_full_line(self, height_values):
+        """
+
+        :param height_values: contains height values that need to be checked
+        :return:
+        """
+        removed_rows = 0
+        min_height = min(height_values)
+        for height_value in height_values:
+            tetraminos_in_current_height = []
+            for tetramino in self.fallen_pieces:
+                if tetramino.ycor() == height_value:
+                    tetraminos_in_current_height.append(tetramino)
+            if (len(tetraminos_in_current_height) == 10):
+                removed_rows += 1
+                for tetramino in tetraminos_in_current_height:
+                    self.fallen_pieces.remove(tetramino)
+                    tetramino.hideturtle()
+
+        for tetramino in self.fallen_pieces:
+            if tetramino.ycor() > min_height:
+                tetramino.goto(tetramino.xcor(), tetramino.ycor()-20*removed_rows)
+
 
 
 def main():
@@ -49,16 +130,20 @@ def main():
     window.setup(window_width, window_height)
     window.tracer(0)
 
-    tetris = Tetris(window_height, window_width, window)
+    tetris = Tetris(window_height, window_width)
+    tetris.new_square_tetramino()
 
     # Set up controls
     window.listen()
     window.onkeypress(window.bye, "Escape")
-
+    window.onkeypress(tetris.drop_tetramino_one_step, "Down")
+    window.onkeypress(tetris.move_left, "Left")
+    window.onkeypress(tetris.move_right, "Right")
 
     while True:
         window.update()
-        tetris.draw_board()
+        tetris.drop_tetramino_one_step()
+
         time.sleep(0.2)
 
 
