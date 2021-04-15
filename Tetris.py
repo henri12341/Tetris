@@ -11,6 +11,15 @@ class Tetris():
         self.window_width = window_width
         self.current_shape = "square"
         self.rotation = 0
+        self.points = 0
+        self.teksti = turtle.Turtle()
+        self.teksti.penup()
+        self.teksti.goto(125, -185)
+        self.update_points()
+
+    def update_points(self):
+        self.teksti.clear()
+        self.teksti.write("points: " + str(self.points))
 
     def game_over(self):
         for tetramino in self.fallen_pieces:
@@ -561,6 +570,8 @@ class Tetris():
         for tetramino in self.fallen_pieces:
             if tetramino.ycor() > min_height:
                 tetramino.goto(tetramino.xcor(), tetramino.ycor()-20*removed_rows)
+        self.points += removed_rows
+        self.update_points()
 
 
 
@@ -597,6 +608,7 @@ def main():
     screen.goto(0, 0)
     screen.down()
     screen.penup()
+
 
     tetris.new_square_tetramino()
 
