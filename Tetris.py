@@ -11,21 +11,39 @@ class Tetris():
         self.current_shape = "square"
         self.rotation = 0
 
+
     def stop_tetraminos(self):
         height_values = []
         for tetramino in self.player_tetraminos:
             self.fallen_pieces.append(tetramino)
             height_values.append(tetramino.ycor())
+            height_values.append(tetramino.ycor()+20)
+            height_values.append(tetramino.ycor()-20)
         self.player_tetraminos = []
         self.check_full_line(height_values)
         self.new_random_tetramino_shape()
 
-    def get_y_coordinate(self):
-        lowest_y = 1000
+    def get_lowest_y_coordinate(self):
+        """
+        Returns lowest y-coordinate of player controlled pieces
+        :return:
+        """
+        lowest_y = self.player_tetraminos[0].ycor()
         for tetramino in self.player_tetraminos:
             if tetramino.ycor() < lowest_y:
                 lowest_y = tetramino.ycor()
         return lowest_y
+
+    def get_lowest_x_coordinate(self):
+        """
+        returns lowest x-coordinate of player controlled pieces
+        :return:
+        """
+        lowest_x = self.player_tetraminos[0].xcor()
+        for tetramino in self.player_tetraminos:
+            if (tetramino.xcor() < lowest_x):
+                lowest_x = tetramino.xcor()
+        return lowest_x
 
     def new_square_tetramino(self):
         x = 0
@@ -249,10 +267,10 @@ class Tetris():
             self.current_shape = "I"
             self.new_i_shape_tetramino()
         if (luku == 2):
-            self.current_shape = "s"
+            self.current_shape = "S"
             self.new_s_shape_tetramino()
         if (luku == 3):
-            self.current_shape = "z"
+            self.current_shape = "Z"
             self.new_z_shape_tetramino()
         if (luku == 4):
             self.current_shape = "L"
@@ -264,14 +282,194 @@ class Tetris():
             self.current_shape = "T"
             self.new_T_shape_tetramino()
 
+    def turn_J_shape(self):
+        self.rotation += 1
+        if (self.rotation > 3):
+            self.rotation = 0
 
+        min_x = self.get_lowest_x_coordinate()
+        min_y = self.get_lowest_y_coordinate()
+
+        if (self.rotation == 0):
+            # pystyssä
+            self.player_tetraminos[0].goto(min_x, min_y)
+            self.player_tetraminos[1].goto(min_x + 20, min_y)
+            self.player_tetraminos[2].goto(min_x + 20, min_y + 20)
+            self.player_tetraminos[3].goto(min_x + 20, min_y + 40)
+        elif (self.rotation == 1):
+            # sivuttain
+            self.player_tetraminos[0].goto(min_x + 40, min_y)
+            self.player_tetraminos[1].goto(min_x + 40, min_y + 20)
+            self.player_tetraminos[2].goto(min_x + 20, min_y + 20)
+            self.player_tetraminos[3].goto(min_x, min_y + 20)
+        elif (self.rotation == 2):
+            # ylösalaisin
+            self.player_tetraminos[0].goto(min_x, min_y)
+            self.player_tetraminos[1].goto(min_x, min_y + 20)
+            self.player_tetraminos[2].goto(min_x, min_y + 40)
+            self.player_tetraminos[3].goto(min_x + 20, min_y + 40)
+        elif (self.rotation == 3):
+            # sivuttain
+            self.player_tetraminos[0].goto(min_x, min_y + 20)
+            self.player_tetraminos[1].goto(min_x, min_y)
+            self.player_tetraminos[2].goto(min_x + 20, min_y)
+            self.player_tetraminos[3].goto(min_x + 40, min_y)
+
+    def turn_L_shape(self):
+        self.rotation += 1
+        if (self.rotation > 3):
+            self.rotation = 0
+
+        min_x = self.get_lowest_x_coordinate()
+        min_y = self.get_lowest_y_coordinate()
+
+        if (self.rotation == 0):
+            # pystyssä
+            self.player_tetraminos[0].goto(min_x, min_y)
+            self.player_tetraminos[1].goto(min_x + 20, min_y)
+            self.player_tetraminos[2].goto(min_x, min_y + 20)
+            self.player_tetraminos[3].goto(min_x, min_y + 40)
+        elif (self.rotation == 1):
+            # sivuttain
+            self.player_tetraminos[0].goto(min_x, min_y)
+            self.player_tetraminos[1].goto(min_x, min_y + 20)
+            self.player_tetraminos[2].goto(min_x + 20, min_y + 20)
+            self.player_tetraminos[3].goto(min_x + 40, min_y + 20)
+        elif (self.rotation == 2):
+            # ylösalaisin
+            self.player_tetraminos[0].goto(min_x, min_y + 40)
+            self.player_tetraminos[1].goto(min_x + 20, min_y + 40)
+            self.player_tetraminos[2].goto(min_x + 20, min_y + 20)
+            self.player_tetraminos[3].goto(min_x + 20, min_y)
+        elif (self.rotation == 3):
+            # sivuttain
+            self.player_tetraminos[0].goto(min_x, min_y)
+            self.player_tetraminos[1].goto(min_x + 20, min_y)
+            self.player_tetraminos[2].goto(min_x + 40, min_y)
+            self.player_tetraminos[3].goto(min_x + 40, min_y + 20)
+
+    def turn_t_shape(self):
+        self.rotation += 1
+        if (self.rotation > 3):
+            self.rotation = 0
+
+        min_x = self.get_lowest_x_coordinate()
+        min_y = self.get_lowest_y_coordinate()
+
+        if (self.rotation == 0):
+            # vaakataso
+            self.player_tetraminos[0].goto(min_x, min_y)
+            self.player_tetraminos[1].goto(min_x + 20, min_y)
+            self.player_tetraminos[2].goto(min_x + 20, min_y + 20)
+            self.player_tetraminos[3].goto(min_x + 40, min_y)
+        elif (self.rotation == 1):
+            # pystyssä
+            self.player_tetraminos[0].goto(min_x + 20, min_y)
+            self.player_tetraminos[1].goto(min_x + 20, min_y + 20)
+            self.player_tetraminos[2].goto(min_x, min_y + 20)
+            self.player_tetraminos[3].goto(min_x + 20, min_y + 40)
+        elif (self.rotation == 2):
+            # ylösalaisin
+            self.player_tetraminos[0].goto(min_x + 20, min_y)
+            self.player_tetraminos[1].goto(min_x, min_y + 20)
+            self.player_tetraminos[2].goto(min_x + 20, min_y + 20)
+            self.player_tetraminos[3].goto(min_x + 40, min_y + 20)
+        elif (self.rotation == 3):
+            # pystyssä
+            self.player_tetraminos[0].goto(min_x, min_y)
+            self.player_tetraminos[1].goto(min_x, min_y + 20)
+            self.player_tetraminos[2].goto(min_x + 20, min_y + 20)
+            self.player_tetraminos[3].goto(min_x, min_y + 40)
+
+    def turn_z_shape(self):
+        self.rotation += 1
+        if (self.rotation > 1):
+            self.rotation = 0
+
+        min_x = self.get_lowest_x_coordinate()
+        min_y = self.get_lowest_y_coordinate()
+
+        if (self.rotation == 0):
+            # vaakataso
+            self.player_tetraminos[0].goto(min_x, min_y + 20)
+            self.player_tetraminos[1].goto(min_x + 20, min_y + 20)
+            self.player_tetraminos[2].goto(min_x + 20, min_y)
+            self.player_tetraminos[3].goto(min_x + 40, min_y)
+        elif (self.rotation == 1):
+            # pystyssä
+            self.player_tetraminos[0].goto(min_x, min_y )
+            self.player_tetraminos[1].goto(min_x, min_y + 20)
+            self.player_tetraminos[2].goto(min_x + 20, min_y + 20)
+            self.player_tetraminos[3].goto(min_x + 20, min_y + 40)
+
+    def turn_s_shape(self):
+        self.rotation += 1
+        if (self.rotation > 1):
+            self.rotation = 0
+
+        min_x = self.get_lowest_x_coordinate()
+        min_y = self.get_lowest_y_coordinate()
+
+        if (self.rotation == 0):
+            # vaakataso
+            self.player_tetraminos[0].goto(min_x, min_y)
+            self.player_tetraminos[1].goto(min_x + 20, min_y)
+            self.player_tetraminos[2].goto(min_x + 20, min_y + 20)
+            self.player_tetraminos[3].goto(min_x + 40, min_y + 20)
+        elif (self.rotation == 1):
+            # pystyssä
+            self.player_tetraminos[0].goto(min_x, min_y + 40)
+            self.player_tetraminos[1].goto(min_x, min_y + 20)
+            self.player_tetraminos[2].goto(min_x + 20, min_y + 20)
+            self.player_tetraminos[3].goto(min_x + 20, min_y)
+
+    def turn_I_shape(self):
+        self.rotation += 1
+        if (self.rotation > 1):
+            self.rotation = 0
+
+        min_x = self.get_lowest_x_coordinate()
+        min_y = self.get_lowest_y_coordinate()
+
+        if (self.rotation == 0):
+            # Pystyssä
+            self.player_tetraminos[0].goto(min_x, min_y)
+            self.player_tetraminos[1].goto(min_x, min_y+20)
+            self.player_tetraminos[2].goto(min_x, min_y+40)
+            self.player_tetraminos[3].goto(min_x, min_y+60)
+        elif (self.rotation == 1):
+            # Vaakataso
+            self.player_tetraminos[0].goto(min_x, min_y)
+            self.player_tetraminos[1].goto(min_x + 20, min_y)
+            self.player_tetraminos[2].goto(min_x + 40, min_y)
+            self.player_tetraminos[3].goto(min_x + 60, min_y)
+
+
+
+    def turn_tetramino(self):
+        if (self.current_shape == "square"):
+            pass
+        elif (self.current_shape == "I"):
+            self.turn_I_shape()
+        elif (self.current_shape == "S"):
+            self.turn_s_shape()
+        elif (self.current_shape == "Z"):
+            self.turn_z_shape()
+        elif (self.current_shape == "T"):
+            self.turn_t_shape()
+        elif (self.current_shape == "L"):
+            self.turn_L_shape()
+        elif (self.current_shape == "J"):
+            self.turn_J_shape()
+        else:
+            return
 
     def drop_tetramino_one_step(self):
 
         # Check that tetramino doesn't go out of window
         if (self.there_is_collision_with_fallen_pieces()):
             self.stop_tetraminos()
-        elif (self.get_y_coordinate() < self.window_height/-2+40):
+        elif (self.get_lowest_y_coordinate() < self.window_height / -2 + 40):
             self.stop_tetraminos()
         else:
             for tetramino in self.player_tetraminos:
@@ -311,7 +509,7 @@ class Tetris():
             for tetramino in self.fallen_pieces:
                 if tetramino.ycor() == height_value:
                     tetraminos_in_current_height.append(tetramino)
-            if (len(tetraminos_in_current_height) == 10):
+            if (len(tetraminos_in_current_height) >= 10):
                 removed_rows += 1
                 for tetramino in tetraminos_in_current_height:
                     self.fallen_pieces.remove(tetramino)
@@ -344,6 +542,7 @@ def main():
     window.onkeypress(tetris.drop_tetramino_one_step, "Down")
     window.onkeypress(tetris.move_left, "Left")
     window.onkeypress(tetris.move_right, "Right")
+    window.onkeypress(tetris.turn_tetramino, "Up")
 
     while True:
         window.update()
