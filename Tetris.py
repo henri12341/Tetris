@@ -3,7 +3,8 @@ import time
 import random
 
 class Tetris():
-    def __init__(self, window_height, window_width):
+    def __init__(self, window_height, window_width, window):
+        self.window = window
         self.fallen_pieces = []
         self.player_tetraminos = []
         self.window_height = window_height
@@ -11,17 +12,36 @@ class Tetris():
         self.current_shape = "square"
         self.rotation = 0
 
+    def game_over(self):
+        for tetramino in self.fallen_pieces:
+            tetramino.hideturtle()
+        for tetramino in self.player_tetraminos:
+            tetramino.hideturtle()
+        self.player_tetraminos = []
+        self.fallen_pieces = []
+        main()
+
 
     def stop_tetraminos(self):
         height_values = []
         for tetramino in self.player_tetraminos:
             self.fallen_pieces.append(tetramino)
+            if (tetramino.ycor() >= self.window_height/2):
+                self.game_over()
             height_values.append(tetramino.ycor())
             height_values.append(tetramino.ycor()+20)
             height_values.append(tetramino.ycor()-20)
+
         self.player_tetraminos = []
         self.check_full_line(height_values)
         self.new_random_tetramino_shape()
+
+    def get_highest_y_coordinate(self):
+        highest_y = self.player_tetraminos[0].ycor()
+        for tetramino in self.player_tetraminos:
+            if tetramino.ycor() > highest_y:
+                highest_y = tetramino.ycor()
+        return highest_y
 
     def get_lowest_y_coordinate(self):
         """
@@ -33,6 +53,13 @@ class Tetris():
             if tetramino.ycor() < lowest_y:
                 lowest_y = tetramino.ycor()
         return lowest_y
+
+    def get_highest_x_coordinate(self):
+        highest_x = self.player_tetraminos[0].xcor()
+        for tetramino in self.player_tetraminos:
+            if (tetramino.xcor() > highest_x):
+                highest_x = tetramino.xcor()
+        return highest_x
 
     def get_lowest_x_coordinate(self):
         """
@@ -486,12 +513,17 @@ class Tetris():
         return False
 
     def move_right(self):
-        for tetramino in self.player_tetraminos:
-            tetramino.goto(tetramino.xcor()+20, tetramino.ycor())
+        if (self.get_highest_x_coordinate() < 5*20):
+            for tetramino in self.player_tetraminos:
+                tetramino.goto(tetramino.xcor()+20, tetramino.ycor())
 
     def move_left(self):
-        for tetramino in self.player_tetraminos:
-            tetramino.goto(tetramino.xcor() - 20, tetramino.ycor())
+        # Check collision with other teraminos
+
+        # Check collision with screen sides
+        if (self.get_lowest_x_coordinate() > (-5 * 20)):
+            for tetramino in self.player_tetraminos:
+                tetramino.goto(tetramino.xcor() - 20, tetramino.ycor())
 
     def check_full_line(self, height_values):
         """
@@ -509,7 +541,7 @@ class Tetris():
             for tetramino in self.fallen_pieces:
                 if tetramino.ycor() == height_value:
                     tetraminos_in_current_height.append(tetramino)
-            if (len(tetraminos_in_current_height) >= 10):
+            if (len(tetraminos_in_current_height) >= 11):
                 removed_rows += 1
                 for tetramino in tetraminos_in_current_height:
                     self.fallen_pieces.remove(tetramino)
@@ -530,11 +562,11 @@ def main():
     window = turtle.Screen()
     window.title("Tetris")
     window.bgcolor("white")
-    window.setup(window_width, window_height)
+    window.setup(window_width, window_height + 40) # extra margins
     window.tracer(0)
 
-    tetris = Tetris(window_height, window_width)
-    tetris.new_square_tetramino()
+
+    tetris = Tetris(window_height, window_width, window)
 
     # Set up controls
     window.listen()
@@ -544,10 +576,22 @@ def main():
     window.onkeypress(tetris.move_right, "Right")
     window.onkeypress(tetris.turn_tetramino, "Up")
 
+    screen = turtle.Turtle()
+    screen.speed(0)
+    screen.shape("square")
+    screen.pencolor("black")
+    screen.fillcolor("black")
+    screen.shapesize(22, 12, 1)
+    screen.up()
+    screen.goto(0, 0)
+    screen.down()
+    screen.penup()
+
+    tetris.new_square_tetramino()
+
     while True:
         window.update()
         tetris.drop_tetramino_one_step()
-
         time.sleep(0.2)
 
 
