@@ -513,13 +513,24 @@ class Tetris():
         return False
 
     def move_right(self):
+        # Check collision with other tetraminos
+        for fallen_tetramino in self.fallen_pieces:
+            for tetramino in self.player_tetraminos:
+                if (tetramino.xcor() + 20 == fallen_tetramino.xcor()
+                        and tetramino.ycor() == fallen_tetramino.ycor()):
+                    return
+        # Check collision with screen sides
         if (self.get_highest_x_coordinate() < 5*20):
             for tetramino in self.player_tetraminos:
                 tetramino.goto(tetramino.xcor()+20, tetramino.ycor())
 
     def move_left(self):
         # Check collision with other teraminos
-
+        for fallen_tetramino in self.fallen_pieces:
+            for tetramino in self.player_tetraminos:
+                if (tetramino.xcor() - 20 == fallen_tetramino.xcor()
+                and tetramino.ycor() == fallen_tetramino.ycor()):
+                    return
         # Check collision with screen sides
         if (self.get_lowest_x_coordinate() > (-5 * 20)):
             for tetramino in self.player_tetraminos:
