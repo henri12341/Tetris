@@ -28,6 +28,7 @@ class Tetris():
             tetramino.hideturtle()
         self.player_tetraminos = []
         self.fallen_pieces = []
+        self.teksti.clear()
         main()
 
 
@@ -613,13 +614,20 @@ def main():
     tetris.new_square_tetramino()
 
     i = 0
+    max_i = 100
 
     while True:
         window.update()
         i += 1
-        if i == 100:
+        if i >= max_i:
             tetris.drop_tetramino_one_step()
             i = 0
+        if tetris.points < 10:
+            max_i = 100
+        elif tetris.points < 20:
+            max_i = 60
+        elif tetris.points < 30:
+            max_i = 20
 
 
 main()
