@@ -612,10 +612,14 @@ def main():
 
     tetris.new_square_tetramino()
 
+    i = 0
+
     while True:
         window.update()
-        tetris.drop_tetramino_one_step()
-        time.sleep(0.2)
+        i += 1
+        if i == 100:
+            tetris.drop_tetramino_one_step()
+            i = 0
 
 
 main()
