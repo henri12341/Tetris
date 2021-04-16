@@ -395,10 +395,10 @@ class Tetris():
 
         if (self.rotation == 0):
             # vaakataso
-            self.player_tetraminos[0].goto(min_x, min_y)
-            self.player_tetraminos[1].goto(min_x + 20, min_y)
+            self.player_tetraminos[0].goto(min_x + 20, min_y)
+            self.player_tetraminos[1].goto(min_x, min_y + 20)
             self.player_tetraminos[2].goto(min_x + 20, min_y + 20)
-            self.player_tetraminos[3].goto(min_x + 40, min_y)
+            self.player_tetraminos[3].goto(min_x + 40, min_y + 20)
         elif (self.rotation == 1):
             # pystyssä
             self.player_tetraminos[0].goto(min_x + 20, min_y)
@@ -407,10 +407,10 @@ class Tetris():
             self.player_tetraminos[3].goto(min_x + 20, min_y + 40)
         elif (self.rotation == 2):
             # ylösalaisin
-            self.player_tetraminos[0].goto(min_x + 20, min_y)
-            self.player_tetraminos[1].goto(min_x, min_y + 20)
+            self.player_tetraminos[0].goto(min_x, min_y)
+            self.player_tetraminos[1].goto(min_x + 20, min_y)
             self.player_tetraminos[2].goto(min_x + 20, min_y + 20)
-            self.player_tetraminos[3].goto(min_x + 40, min_y + 20)
+            self.player_tetraminos[3].goto(min_x + 40, min_y)
         elif (self.rotation == 3):
             # pystyssä
             self.player_tetraminos[0].goto(min_x, min_y)
